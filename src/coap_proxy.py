@@ -6,10 +6,12 @@
 
 '''
 URLs used in this file need to be changed, as they are currently written so that they work when 
-ran from the same device
+ran from the same device.
+
+This code also uses HTTP, which might need to be changed for this to work with CoAP.
 '''
 
-import fastapi, httpx, json, asyncio, random, sys, subprocess
+import fastapi, httpx, json, random
 
 app = fastapi.FastAPI()
 
@@ -32,7 +34,7 @@ async def contact_CoAP(urlToSend):
 # Route which sends a message to the CoAP device and expects the reversed message back 
 # after a certain period of sleep on the workier
 @app.get("/send_sleep/{message}")
-async def send_work(message):
+async def send_sleep(message):
     # Print used for test purposes
     # print(f"Given message is: {message}.")
     ret_msg = await sleep_work(message)
@@ -43,7 +45,7 @@ async def send_work(message):
 @app.get("/record_temperature")
 async def record_temperature():
     # The temperature is randomly generated here
-    current_temperature = random.randint(17, 30)
+    current_temperature = str(random.randint(17, 30))
 
     ret_msg = await write_temperature(current_temperature)
     return ret_msg
