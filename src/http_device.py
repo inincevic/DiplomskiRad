@@ -9,7 +9,6 @@ if CoAP works with HTTP written code.
 '''
 
 import fastapi, time, httpx, sys, json, os, subprocess, asyncio
-import aiocoap
 
 app = fastapi.FastAPI()
 write_file_name = "./write_file.txt"

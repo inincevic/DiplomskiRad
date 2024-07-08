@@ -12,7 +12,6 @@ This code also uses HTTP, which might need to be changed for this to work with C
 '''
 
 import fastapi, httpx, json, random
-import aiocoap
 
 app = fastapi.FastAPI()
 
