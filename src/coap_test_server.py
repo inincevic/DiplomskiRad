@@ -7,14 +7,15 @@ import aiocoap.resource as resource
 from aiocoap.numbers.contentformat import ContentFormat
 import aiocoap
 
+import json
 import os
 write_file_name = "./write_file.txt"
 
 ### will do a rework, but keep this
 class Welcome(resource.Resource):
     representations = {
-        ContentFormat.TEXT: b"This is a test server used for purposes of testing stuff",
-        ContentFormat.LINKFORMAT: b"</.well-known/core>,ct=40",
+        ContentFormat.TEXT: b"This is a test server used for purposes of simulating what actual microcontrollers would be doing in a realistic CoAP network",
+        # ContentFormat.LINKFORMAT: b"</.well-known/core>,ct=40",
         # ad-hoc for application/xhtml+xml;charset=utf-8
         # ContentFormat(65000): b'<html xmlns="http://www.w3.org/1999/xhtml">'
         # b"<head><title>aiocoap demo</title></head>"
@@ -125,6 +126,10 @@ class Test(resource.Resource):
         return aiocoap.Message(payload=text.encode("utf8"))
 
 # Classes where the CoAP device's tasks are detailed
+
+# Class where the CoAP device records the given temperature into the file
+# The temperature needs to be given through the Post method, and the time
+# of recording is automatically taken from the system.
 class RecordTemperature(resource.Resource):
     async def render_post(self, request):
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -160,8 +165,20 @@ class RecordTemperature(resource.Resource):
 
         return aiocoap.Message(payload = text.encode("utf8"))
 
+# Class where the CoAP device returns all recorded temperatures
+class ListTemperatures(resource.Resource):
+    async def render_get(self, request):
+        with open(write_file_name, "r") as file:
+            lines = file.readlines()
+        recorded_temperatures = ""
+        for line in lines:
+            recorded_temperatures = recorded_temperatures + line
+        print(recorded_temperatures)
+        return aiocoap.Message(payload = recorded_temperatures.encode("utf8"))
+
 async def main():
 
+    # Creating the write file if it doesn't already exist
     if not os.path.exists(write_file_name):
         with open(write_file_name, 'w') as write_file:
             print(f"File {write_file_name} created.")
@@ -178,7 +195,9 @@ async def main():
     root.add_resource(["other", "separate"], SeparateLargeResource())
     root.add_resource(["test"], Test())
     root.add_resource(["recordtemp"], RecordTemperature())
+    root.add_resource(["alltemperatures"], ListTemperatures())
 
+    # On Windows bind is necessary because the code can't pick up the localhost address and port by itself
     await aiocoap.Context.create_server_context(bind=('127.0.0.1',5683), site = root)
 
     # Run forever
