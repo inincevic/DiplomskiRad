@@ -1,92 +1,97 @@
-# This code will simulate three different CoAP devices.
-# All routes listed in coap_proxy.py will be used here so that they can be ran.
-# It's important to note that URLs in proxy app are hard coded, so for different routes to be used,
-# this device needs to be ran on different URLs (presently PORTS).
+import datetime
+import logging
 
-'''
-This code is for now written in HTTP, I will need to check if I need rewrite the code into CoAP, or
-if CoAP works with HTTP written code.
-'''
+import asyncio
 
-import fastapi, time, httpx, sys, json, os, subprocess, asyncio
+import aiocoap.resource as resource
+from aiocoap.numbers.contentformat import ContentFormat
 import aiocoap
 
-app = fastapi.FastAPI()
+import os
 write_file_name = "./write_file.txt"
 
-# Startup event that checks if the file for writing exists, and creates it if it doesn't
-@app.on_event("startup")
-async def open_write_file():
+    
+# test route
+class Test(resource.Resource):
+    async def render_get(self, request):
+        text = "Test successful"
+        return aiocoap.Message(payload=text.encode("utf8"))
+
+# Classes where the CoAP device's tasks are detailed
+
+# Class where the CoAP device records the given temperature into the file
+# The temperature needs to be given through the Post method, and the time
+# of recording is automatically taken from the system.
+class RecordTemperature(resource.Resource):
+    async def render_post(self, request):
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+        
+        # In CoAP, body of a request is called "payload"!
+        current_temperature = int(request.payload)
+
+        # Crafting the message to send
+        message_to_write = ""
+        message_to_write = message_to_write + ("Time of recording: %s" % current_time)
+        message_to_write = message_to_write + ("\n Recorded temperature: %s " % current_temperature)
+        message_to_write = message_to_write + ("\n----------------------------------------------\n")
+        
+        # Establishing the number of lines in the file, so that writing into the file can be confirmed.
+        with open(write_file_name, "r") as file:
+            lines = file.readlines()
+            write_file_name_start_lenght = len(lines)
+
+                # Writing the message into the file
+        with open(write_file_name, "a") as file:
+                file.write(message_to_write)
+        
+        # Checking the current number of lines in the file.
+        with open(write_file_name, "r") as file:
+            lines = file.readlines()
+            write_file_name_end_lenght = len(lines)
+
+        # Checking if the message was added and returning an apropriate reply.
+        if(write_file_name_end_lenght > write_file_name_start_lenght):
+            text = "The message has been written into the file."
+        else:
+            text = "An error ocurred while writing into file."
+
+        return aiocoap.Message(payload = text.encode("utf8"))
+
+# Class where the CoAP device returns all recorded temperatures
+class ListTemperatures(resource.Resource):
+    async def render_get(self, request):
+        with open(write_file_name, "r") as file:
+            lines = file.readlines()
+        recorded_temperatures = ""
+        for line in lines:
+            recorded_temperatures = recorded_temperatures + line
+        print(recorded_temperatures)
+        return aiocoap.Message(payload = recorded_temperatures.encode("utf8"))
+
+async def main():
+
+    # Creating the write file if it doesn't already exist
     if not os.path.exists(write_file_name):
         with open(write_file_name, 'w') as write_file:
             print(f"File {write_file_name} created.")
 
-# -----------------------------------------------------------------------------------------------
-# Management Routes and Methods
+    # Resource tree creation
+    root = resource.Site()
 
-# Test route #1
-@app.get("/")
-def test_get():
-    return "The worker code works."
-
-# Test route #2
-@app.get("/temperature")
-def test_get():
-    return "Current temperature is 34 degrees celsius."
-
-# Routes that do the main jobs of CoAP devices
-
-# Route that makes sure that the simple job of reversing the recieved message is done
-# with a delay of 10s
-@app.get("/do_work/{recieved_message}")
-def do_work(recieved_message):
+    root.add_resource(
+        [".well-known", "core"], resource.WKCResource(root.get_resources_as_linkheader)
+    )
     
-    # Print to test if the message was correctly recieved
-    # print(f"I recieved the following message: {message}.")
-    
-    # Sleep is used to simulaate processing time
-    time.sleep(10)
+    root.add_resource(["test"], Test())
+    root.add_resource(["simulations-rutes/recordtemp"], RecordTemperature())
+    root.add_resource(["simulations-rutes/alltemperatures"], ListTemperatures())
 
-    return_message = recieved_message[::-1]
-    
-    # Prints that confirm if  and when the processes were completed correctly
-    # print(f"Reversed message: {message2}")
-    # print(f"Done sleeping, returning reversed message: {message2}")
-    return return_message
+    # On Windows bind is necessary because the code can't pick up the localhost address and port by itself
+    await aiocoap.Context.create_server_context(bind=('127.0.0.1',5683), site = root)
 
-# Route that writes down the recorded temperature
-# In a realistic device with a measuring tool, this route would take the current
-# measure of temperature and write it into file, but as we're simulating a network
-# this temperature is being randomly generated and sent to the CoAP device.
-@app.get("/write_temperature/{message}")
-async def write_to_file(message):
+    # Run forever
+    await asyncio.get_running_loop().create_future()
 
-    # Establishing the number of lines in the file, so that writing into the file can be confirmed.
-    with open(write_file_name, "r") as file:
-        lines = file.readlines()
-        write_file_name_start_lenght = len(lines)
 
-    # Adding a line break to the end of the message so that messages can be separated from each other.
-    message_to_write = message + "\n"
-
-    # Writing the message into the file
-    with open(write_file_name, "a") as file:
-            file.write(message_to_write)
-    
-    # Checking the current number of lines in the file.
-    with open(write_file_name, "r") as file:
-        lines = file.readlines()
-        write_file_name_end_lenght = len(lines)
-
-    # Checking if the message was added and returning an apropriate reply.
-    if(write_file_name_end_lenght > write_file_name_start_lenght):
-        return "The message has been written into the file."
-    else:
-        return "An error ocurred while writing into file."
-    
-# Route which tells the CoAP device to report on all recorded temperatures.
-@app.get("/list_temperatures")
-def read_from_file():
-    with open(write_file_name, "r") as file:
-        lines = file.readlines()
-    return lines
+if __name__ == "__main__":
+    asyncio.run(main())
