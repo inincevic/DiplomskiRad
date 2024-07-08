@@ -7,18 +7,21 @@ import aiocoap.resource as resource
 from aiocoap.numbers.contentformat import ContentFormat
 import aiocoap
 
+import os
+write_file_name = "./write_file.txt"
 
+### will do a rework, but keep this
 class Welcome(resource.Resource):
     representations = {
-        ContentFormat.TEXT: b"Welcome to the demo server",
+        ContentFormat.TEXT: b"This is a test server used for purposes of testing stuff",
         ContentFormat.LINKFORMAT: b"</.well-known/core>,ct=40",
         # ad-hoc for application/xhtml+xml;charset=utf-8
-        ContentFormat(65000): b'<html xmlns="http://www.w3.org/1999/xhtml">'
-        b"<head><title>aiocoap demo</title></head>"
-        b"<body><h1>Welcome to the aiocoap demo server!</h1>"
-        b'<ul><li><a href="time">Current time</a></li>'
-        b'<li><a href="whoami">Report my network address</a></li>'
-        b"</ul></body></html>",
+        # ContentFormat(65000): b'<html xmlns="http://www.w3.org/1999/xhtml">'
+        # b"<head><title>aiocoap demo</title></head>"
+        # b"<body><h1>Welcome to the aiocoap demo server!</h1>"
+        # b'<ul><li><a href="time">Current time</a></li>'
+        # b'<li><a href="whoami">Report my network address</a></li>'
+        # b"</ul></body></html>",
     }
 
     default_representation = ContentFormat.TEXT
@@ -35,6 +38,7 @@ class Welcome(resource.Resource):
             raise aiocoap.error.UnsupportedContentFormat
 
 
+### Definitely could delete
 class BlockResource(resource.Resource):
     """Example resource which supports the GET and PUT methods. It sends large
     responses, which trigger blockwise transfer."""
@@ -61,6 +65,8 @@ class BlockResource(resource.Resource):
         return aiocoap.Message(code=aiocoap.CHANGED, payload=self.content)
 
 
+### Could learn from this.
+### To delete
 class SeparateLargeResource(resource.Resource):
     """Example resource which supports the GET method. It uses asyncio.sleep to
     simulate a long-running operation, and thus forces the protocol to send
@@ -81,7 +87,7 @@ class SeparateLargeResource(resource.Resource):
         )
         return aiocoap.Message(payload=payload)
 
-
+# Time resource, could use
 class TimeResource(resource.ObservableResource):
     """Example resource that can be observed. The `notify` method keeps
     scheduling itself, and calles `update_state` to trigger sending
@@ -111,44 +117,67 @@ class TimeResource(resource.ObservableResource):
     async def render_get(self, request):
         payload = datetime.datetime.now().strftime("%Y-%m-%d %H:%M").encode("ascii")
         return aiocoap.Message(payload=payload)
-
+    
+### my test route
 class Test(resource.Resource):
     async def render_get(self, request):
         text = "Test successful"
         return aiocoap.Message(payload=text.encode("utf8"))
-        ...
 
-class WhoAmI(resource.Resource):
-    async def render_get(self, request):
-        text = ["Used protocol: %s." % request.remote.scheme]
+# Classes where the CoAP device's tasks are detailed
+class RecordTemperature(resource.Resource):
+    async def render_post(self, request):
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+        
+        # In CoAP, body of a request is called "payload"!
+        current_temperature = int(request.payload)
 
-        text.append("Request came from %s." % request.remote.hostinfo)
-        text.append("The server address used %s." % request.remote.hostinfo_local)
+        # Crafting the message to send
+        message_to_write = ""
+        message_to_write = message_to_write + ("Time of recording: %s" % current_time)
+        message_to_write = message_to_write + ("\n Recorded temperature: %s " % current_temperature)
+        message_to_write = message_to_write + ("\n----------------------------------------------\n")
+        
+        # Establishing the number of lines in the file, so that writing into the file can be confirmed.
+        with open(write_file_name, "r") as file:
+            lines = file.readlines()
+            write_file_name_start_lenght = len(lines)
 
-        claims = list(request.remote.authenticated_claims)
-        if claims:
-            text.append(
-                "Authenticated claims of the client: %s."
-                % ", ".join(repr(c) for c in claims)
-            )
+                # Writing the message into the file
+        with open(write_file_name, "a") as file:
+                file.write(message_to_write)
+        
+        # Checking the current number of lines in the file.
+        with open(write_file_name, "r") as file:
+            lines = file.readlines()
+            write_file_name_end_lenght = len(lines)
+
+        # Checking if the message was added and returning an apropriate reply.
+        if(write_file_name_end_lenght > write_file_name_start_lenght):
+            text = "The message has been written into the file."
         else:
-            text.append("No claims authenticated.")
+            text = "An error ocurred while writing into file."
 
-        return aiocoap.Message(content_format=0, payload="\n".join(text).encode("utf8"))
-
+        return aiocoap.Message(payload = text.encode("utf8"))
 
 async def main():
+
+    if not os.path.exists(write_file_name):
+        with open(write_file_name, 'w') as write_file:
+            print(f"File {write_file_name} created.")
+
     # Resource tree creation
     root = resource.Site()
 
     root.add_resource(
         [".well-known", "core"], resource.WKCResource(root.get_resources_as_linkheader)
     )
-    
+    root.add_resource([""], Welcome())
     root.add_resource(["time"], TimeResource())
     root.add_resource(["other", "block"], BlockResource())
     root.add_resource(["other", "separate"], SeparateLargeResource())
     root.add_resource(["test"], Test())
+    root.add_resource(["recordtemp"], RecordTemperature())
 
     await aiocoap.Context.create_server_context(bind=('127.0.0.1',5683), site = root)
 
@@ -158,32 +187,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-
-
-
-# import asyncio
-
-# import aiocoap.resource as resource
-# from aiocoap.numbers.contentformat import ContentFormat
-# import aiocoap
-
-# app = fastapi.FastAPI()
-
-# class SimpleResource():
-#     async def render_get(self, request):
-#         return aiocoap.Message(content_format=0, payload=b"Hello, this is the CoAP server!")
-
-# @app.on_event("startup")
-# async def test_startup():
-#     # Create a resource tree for the CoAP server
-#     root = resource.Site()
-#     root.add_resource(('hello',), SimpleResource())
-
-#     # Create a CoAP server context
-#     context = await aiocoap.Context.create_server_context(bind=('127.0.0.1',5683), site = root)
-
-# @app.get("/test")
-# async def test_route():
-#     print("CoAP server running on coap://localhost/")
-#     return "Test returned"
