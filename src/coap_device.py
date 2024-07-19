@@ -65,7 +65,7 @@ class ListTemperatures(resource.Resource):
         recorded_temperatures = ""
         for line in lines:
             recorded_temperatures = recorded_temperatures + line
-        print(recorded_temperatures)
+        #print(recorded_temperatures)
         return aiocoap.Message(payload = recorded_temperatures.encode("utf8"))
 
 async def main():
@@ -83,11 +83,11 @@ async def main():
     )
     
     root.add_resource(["test"], Test())
-    root.add_resource(["simulations-rutes/recordtemp"], RecordTemperature())
-    root.add_resource(["simulations-rutes/alltemperatures"], ListTemperatures())
+    root.add_resource(["recordtemp"], RecordTemperature())
+    root.add_resource(["alltemperatures"], ListTemperatures())
 
     # On Windows bind is necessary because the code can't pick up the localhost address and port by itself
-    await aiocoap.Context.create_server_context(bind=('127.0.0.1',5683), site = root)
+    await aiocoap.Context.create_server_context(bind=('::1',5683), site = root)
 
     # Run forever
     await asyncio.get_running_loop().create_future()

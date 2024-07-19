@@ -10,3 +10,9 @@ Time of recording: 2024-07-08 13:12
 Time of recording: 2024-07-08 13:22
  Recorded temperature: 27 
 ----------------------------------------------
+Time of recording: 2024-07-17 19:03
+ Recorded temperature: 25 
+----------------------------------------------
+Time of recording: 2024-07-19 09:36
+ Recorded temperature: 35 
+----------------------------------------------
