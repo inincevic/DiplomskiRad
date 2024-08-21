@@ -1,0 +1,28 @@
+Recording device: CoAPDevice1
+ Time of recording: 2024-08-21 11:58
+ Recorded temperature: 25.5 
+----------------------------------------------
+Recording device: CoAPDevice1
+ Time of recording: 2024-08-21 11:59
+ Recorded temperature: 29.5 
+----------------------------------------------
+Recording device: CoAPDevice1
+ Time of recording: 2024-08-21 11:59
+ Recorded temperature: 27.1 
+----------------------------------------------
+Recording device: CoAPDevice1
+ Time of recording: 2024-08-21 12:01
+ Recorded temperature: 31.2 
+----------------------------------------------
+Recording device: CoAPDevice1
+ Time of recording: 2024-08-21 12:02
+ Recorded temperature: 29.0 
+----------------------------------------------
+Recording device: CoAPDevice2
+ Time of recording: 2024-08-21 12:06
+ Recorded temperature: 29.7 
+----------------------------------------------
+Recording device: CoAPDevice2
+ Time of recording: 2024-08-21 12:06
+ Recorded temperature: 27.7 
+----------------------------------------------
