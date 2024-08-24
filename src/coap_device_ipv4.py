@@ -25,9 +25,10 @@ class Test(resource.Resource):
 
 # Classes where the CoAP device's tasks are detailed
 
-# Class where the CoAP device records the given temperature into the file
-# The temperature needs to be given through the Post method, and the time
-# of recording is automatically taken from the system.
+# Class where the CoAP device records the given temperature into the file and returns it 
+# to the service that requested the temperature
+# The temperature is randomly generated through the generate_random_temperature() method
+# Time of recording is automatically recorded by the system
 class RecordTemperature(resource.Resource):
     async def render_get(self, request):
         global device_name
