@@ -1,6 +1,4 @@
-import datetime
-import random
-import asyncio
+import datetime, random, asyncio
 import aiocoap.resource as resource
 from aiocoap.numbers.contentformat import ContentFormat
 import aiocoap
@@ -108,4 +106,3 @@ if __name__ == "__main__":
     args = parser.parse_args()
     device_name = args.name
     asyncio.run(main())
-    

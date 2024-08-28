@@ -98,3 +98,5 @@ async def get_all_temperatures():
     all_recorded = [(item[1], item[2], item[3]) for item in rows]
 
     return all_recorded
+
+### python -m uvicorn HTTP_to_CoAP_proxy_IPv6:app --reload --host '::1'

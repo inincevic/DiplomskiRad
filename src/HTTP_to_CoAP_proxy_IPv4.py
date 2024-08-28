@@ -68,3 +68,6 @@ async def get_temperature_device2():
     temperature = response.payload.decode("utf8").split(":")[1].strip()
 
     return temperature
+
+## running
+## python -m uvicord HTTP_to_CoAP_proxy_IPv4:app --reload --port 8000

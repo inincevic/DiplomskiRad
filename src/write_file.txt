@@ -18,3 +18,15 @@ Recording device: Device1
  Time of recording: 2024-08-23 20:17
  Recorded temperature: 33.0 
 ----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-08-28 11:34
+ Recorded temperature: 25.4 
+----------------------------------------------
+Recording device: Device2
+ Time of recording: 2024-08-28 14:41
+ Recorded temperature: 29.6 
+----------------------------------------------
+Recording device: Device2
+ Time of recording: 2024-08-28 14:41
+ Recorded temperature: 25.9 
+----------------------------------------------

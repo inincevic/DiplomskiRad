@@ -98,3 +98,6 @@ async def get_all_temperatures():
     all_recorded = [(item[1], item[2], item[3]) for item in rows]
 
     return all_recorded
+
+## running
+## python -m uvicorn HTTP_client_IPv4:app --reload --port 8001
