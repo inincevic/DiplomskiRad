@@ -85,7 +85,7 @@ async def get_temperature_device2():
 
     return recorded_temperature
 
-@app.get("/all_recored_temperatures")
+@app.get("/all_recorded_temperatures")
 async def get_all_temperatures():
     all_recorded = []
     # Fetching all temperatures from the table
