@@ -30,3 +30,83 @@ Recording device: Device2
  Time of recording: 2024-08-28 14:41
  Recorded temperature: 25.9 
 ----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 10:12
+ Recorded temperature: 30.8 
+----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 10:12
+ Recorded temperature: 30.5 
+----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 10:12
+ Recorded temperature: 25.1 
+----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 11:30
+ Recorded temperature: 30.3 
+----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 11:31
+ Recorded temperature: 29.4 
+----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 11:31
+ Recorded temperature: 30.6 
+----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 11:31
+ Recorded temperature: 27.4 
+----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 11:31
+ Recorded temperature: 27.8 
+----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 11:31
+ Recorded temperature: 31.8 
+----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 11:32
+ Recorded temperature: 28.5 
+----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 11:32
+ Recorded temperature: 30.3 
+----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 11:32
+ Recorded temperature: 30.7 
+----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 11:32
+ Recorded temperature: 30.8 
+----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 11:32
+ Recorded temperature: 32.8 
+----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 12:30
+ Recorded temperature: 29.2 
+----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 12:30
+ Recorded temperature: 27.9 
+----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 12:30
+ Recorded temperature: 30.6 
+----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 12:30
+ Recorded temperature: 29.0 
+----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 12:32
+ Recorded temperature: 28.9 
+----------------------------------------------
+Recording device: Device1
+ Time of recording: 2024-09-04 12:32
+ Recorded temperature: 31.7 
+----------------------------------------------
