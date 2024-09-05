@@ -1,0 +1,19 @@
+[
+    {
+        "Address A": "127.0.0.1",
+        "Address B": "127.0.0.1",
+        "Bits/s A → B": "127",
+        "Bits/s B → A": "166",
+        "Bytes": "66232",
+        "Bytes A → B": "28733",
+        "Bytes B → A": "37499",
+        "Duration": "1796.710497",
+        "Packets": "974",
+        "Packets A → B": "487",
+        "Packets B → A": "487",
+        "Port A": "39261",
+        "Port B": "5683",
+        "Rel Start": "0.610939",
+        "Stream ID": "0"
+    }
+]
