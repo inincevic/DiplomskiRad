@@ -33,7 +33,14 @@ async def generate_random_temperature():
     return random_number
 
 # ----------------------------------------------------------------------------------- 
-# Routes for asking the devices for temperatures (through the proxy)
+
+# Classes where the CoAP device's tasks are detailed
+
+# Class where the CoAP device randomly generates a temperature, 
+# records that temperature into the file and returns it 
+# to the service that requested the temperature
+# The temperature is randomly generated through the generate_random_temperature() method
+# Time of recording is automatically recorded by the system
 @app.get("/record_temperature")
 async def get_temperature_device1():
     global device_name
@@ -41,7 +48,7 @@ async def get_temperature_device1():
         
     current_temperature = await generate_random_temperature()
 
-    # Crafting the message to send
+    # Crafting the message to write
     message_to_write = ""
     message_to_write = message_to_write + ("Recording device: %s" % device_name)
     message_to_write = message_to_write + ("\n Time of recording: %s" % current_time)
@@ -73,6 +80,7 @@ async def get_temperature_device1():
 @app.get("/all_temperatures")
 async def get_temperature_device2():
     global write_file_name
+    # opening the file to read all temperatures recorded into it
     with open(write_file_name, "r") as file:
         lines = file.readlines()
     recorded_temperatures = ""

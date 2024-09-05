@@ -4,7 +4,10 @@ import psycopg2
 
 
 app = fastapi.FastAPI()
-proxy_url = "http://127.0.0.1:8000" ### change this to [::1] for IPv6
+
+# preparing the global variables that will be used in the 
+# rest of the code
+proxy_url = "http://127.0.0.1:8000"
 conn = ""
 cursor = ""
 table_name = ""
@@ -25,6 +28,7 @@ async def startup_method():
 @app.on_event("shutdown")
 async def shutdown_method():
     global conn, cursor
+    # on shutdown, the client disconnects from the database
     if conn:
         cursor.close()
         conn.close()
@@ -43,10 +47,12 @@ def test_get():
 # Routes for asking the devices for temperatures (through the proxy)
 @app.get("/temperature_dev1")
 async def get_temperature_device1():
+    # depending on the device, the route is changed to add a different endpoint
     url = proxy_url + "/temperature_device1"
 
     print("Asking Device 1 for the recorded temperature.")
     
+    # sending the request to the proxy
     async with httpx.AsyncClient() as client:
         response = await client.get(url, timeout = 25)
         recorded_temperature = json.loads(response.text)
@@ -65,10 +71,12 @@ async def get_temperature_device1():
 
 @app.get("/temperature_dev2")
 async def get_temperature_device2():
+    # depending on the device, the route is changed to add a different endpoint
     url = proxy_url + "/temperature_device2"
 
     print("Asking Device 2 for the recorded temperature.")
     
+    # sending the request to the proxy
     async with httpx.AsyncClient() as client:
         response = await client.get(url, timeout = 25)
         recorded_temperature = json.loads(response.text)
@@ -88,6 +96,7 @@ async def get_temperature_device2():
 @app.get("/all_recorded_temperatures")
 async def get_all_temperatures():
     all_recorded = []
+
     # Fetching all temperatures from the table
     cursor.execute(f"SELECT * FROM {table_name};")
     rows = cursor.fetchall()
@@ -99,5 +108,5 @@ async def get_all_temperatures():
 
     return all_recorded
 
-## running
+## running this code
 ## python -m uvicorn HTTP_client_IPv4:app --reload --port 8001

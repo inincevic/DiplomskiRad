@@ -37,9 +37,6 @@ if conn:
     conn.close()
 
 
-# # connection string for postgredb ----- DELETE BEFORE PUSHING TO GIT
-# # postgres://tsdbadmin:icpv9i2l4ewanuzw@nc0exan2js.pephiae70q.tsdb.cloud.timescale.com:30892/tsdb?sslmode=require
-
 # Dropping tables
 # sql = """DROP TABLE recorded_temperatures_IPv4"""
 # cursor.execute(sql)

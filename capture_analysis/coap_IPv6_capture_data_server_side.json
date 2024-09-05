@@ -1,0 +1,36 @@
+[
+    {
+        "Address A": "127.0.0.1",
+        "Address B": "224.0.0.251",
+        "Bits/s A → B": "8",
+        "Bits/s B → A": "0",
+        "Bytes": "169",
+        "Bytes A → B": "169",
+        "Bytes B → A": "0",
+        "Duration": "159.42008899999996",
+        "Packets": "2",
+        "Packets A → B": "2",
+        "Packets B → A": "0",
+        "Port A": "5353",
+        "Port B": "5353",
+        "Rel Start": "1034.079469",
+        "Stream ID": "1"
+    },
+    {
+        "Address A": "::1",
+        "Address B": "::1",
+        "Bits/s A → B": "171",
+        "Bits/s B → A": "210",
+        "Bytes": "85888",
+        "Bytes A → B": "38552",
+        "Bytes B → A": "47336",
+        "Duration": "1799.021188",
+        "Packets": "976",
+        "Packets A → B": "488",
+        "Packets B → A": "488",
+        "Port A": "40306",
+        "Port B": "5683",
+        "Rel Start": "0.623696",
+        "Stream ID": "0"
+    }
+]

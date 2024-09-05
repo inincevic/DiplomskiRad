@@ -17,7 +17,7 @@ async def generate_random_temperature():
     #print(random_number)
     return random_number
 
-# test route
+# test route, checking if the CoAP device is working as it should
 class Test(resource.Resource):
     async def render_get(self, request):
         text = "Test successful"
@@ -25,9 +25,11 @@ class Test(resource.Resource):
 
 # Classes where the CoAP device's tasks are detailed
 
-# Class where the CoAP device records the given temperature into the file
-# The temperature needs to be given through the Post method, and the time
-# of recording is automatically taken from the system.
+# Class where the CoAP device randomly generates a temperature, 
+# records that temperature into the file and returns it 
+# to the service that requested the temperature
+# The temperature is randomly generated through the generate_random_temperature() method
+# Time of recording is automatically recorded by the system
 class RecordTemperature(resource.Resource):
     async def render_get(self, request):
         global device_name
@@ -68,12 +70,15 @@ class RecordTemperature(resource.Resource):
 # Class where the CoAP device returns all recorded temperatures
 class ListTemperatures(resource.Resource):
     async def render_get(self, request):
+        # opening the file to read all temperatures recorded into it
         with open(write_file_name, "r") as file:
             lines = file.readlines()
         recorded_temperatures = ""
         for line in lines:
             recorded_temperatures = recorded_temperatures + line
+
         #print(recorded_temperatures)
+
         return aiocoap.Message(payload = recorded_temperatures.encode("utf8"))
 
 async def main():
@@ -86,6 +91,7 @@ async def main():
     # Resource tree creation
     root = resource.Site()
 
+    # Adding resources, or routes, to the device
     root.add_resource(
         [".well-known", "core"], resource.WKCResource(root.get_resources_as_linkheader)
     )
@@ -102,6 +108,8 @@ async def main():
 
 
 if __name__ == "__main__":
+    # as the name for the device is used when recording temperatures, an argument needs to be
+    # recorded from the arguments that were imput when the device was started
     parser = argparse.ArgumentParser(description="Parser is used for the name of the device that is running.")
     parser.add_argument("name", help="Please put in the name of this device")
     args = parser.parse_args()

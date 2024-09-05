@@ -11,10 +11,11 @@ async def test_startup():
     global context
     context = await Context.create_client_context()
 
+# route for testing the connection to the CoAP server
 @app.get("/test")
 async def test_route():
     global context
-    # CoAP server URL (replace with your server's URL)
+    # CoAP server URL
     server_url = "coap://127.0.0.1:5683/test"
 
     # Create a request message
@@ -32,12 +33,13 @@ async def test_route():
 
 # There will be different routes for taking temperatures from different devices
 # For the purposes of simplicity, there will be two known devices: CoAPdevice1, and CoAPdevice2
-# There will be two routes made accordingly for eahc of these.
+# There will be two routes made accordingly for each of those.
 @app.get("/temperature_device1")
 async def get_temperature_device1():
     global context
-    # CoAP server URL
-    server_url = "coap://127.0.0.1:5683/recordtemp"  ### presently, as both devices are running on the very same computer as the proxy, they take up localhost at port 5683, this will need to change
+    # CoAP server URL, with this example, both servers run on the same IP and port
+    # thus it's impossible to run them at the same time on the same host
+    server_url = "coap://127.0.0.1:5683/recordtemp"
 
     # Create a request message
     request = Message(code=GET, uri=server_url)
@@ -54,8 +56,9 @@ async def get_temperature_device1():
 @app.get("/temperature_device2")
 async def get_temperature_device2():
     global context
-    # CoAP server URL
-    server_url = "coap://127.0.0.1:5683/recordtemp"  ### presently, as both devices are running on the very same computer as the proxy, they take up localhost at port 5683, this will need to change
+    # CoAP server URL, with this example, both servers run on the same IP and port
+    # thus it's impossible to run them at the same time on the same host
+    server_url = "coap://127.0.0.1:5683/recordtemp"
 
     # Create a request message
     request = Message(code=GET, uri=server_url)
@@ -69,5 +72,5 @@ async def get_temperature_device2():
 
     return temperature
 
-## running
+## running this code
 ## python -m uvicord HTTP_to_CoAP_proxy_IPv4:app --reload --port 8000

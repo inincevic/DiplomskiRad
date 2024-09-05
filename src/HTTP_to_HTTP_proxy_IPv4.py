@@ -3,15 +3,11 @@ from aiocoap import *
 
 app = fastapi.FastAPI()
 
-
-@app.on_event("startup")
-async def test_startup():
-    pass
-
+# test route for testing hte connection to the HTTP device
 @app.get("/test")
 async def test_route():
     
-    # HTTP server URL (replace with your server's URL)
+    # HTTP server URL
     server_url = "http://127.0.0.1:8002/test"
 
     # Sending a HTTP request
@@ -20,8 +16,6 @@ async def test_route():
         resp_test = json.loads(response.text)
     
     # Returning the response
-    #print(recorded_temperature)
-
     return resp_test
 
 # There will be different routes for taking temperatures from different devices
@@ -29,7 +23,8 @@ async def test_route():
 # There will be two routes made accordingly for eahc of these.
 @app.get("/temperature_device1")
 async def get_temperature_device1():
-    # HTTP server URL (replace with your server's URL)
+    # CoAP server URL, with this example, both servers run on the same IP and port
+    # thus it's impossible to run them at the same time on the same host
     server_url = "http://127.0.0.1:8002/record_temperature"
 
     # Sending a HTTP request
@@ -44,7 +39,8 @@ async def get_temperature_device1():
 
 @app.get("/temperature_device2")
 async def get_temperature_device2():
-    # HTTP server URL (replace with your server's URL)
+    # CoAP server URL, with this example, both servers run on the same IP and port
+    # thus it's impossible to run them at the same time on the same host
     server_url = "http://127.0.0.1:8002/record_temperature"
 
     # Sending a HTTP request
@@ -57,5 +53,5 @@ async def get_temperature_device2():
 
     return recorded_temperature
 
-## running
+## running this code
 ## python -m uvicorn HTTP_to_HTTP_proxy_IPv4:app --reload --port 8000
